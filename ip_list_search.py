@@ -92,9 +92,9 @@ def write_output(communication_list, ip_not_found):
             results_writer.writerow(ip_hit)
     with open('search_results.csv', mode='a',  newline='') as search_results:
         results_writer = csv.writer(search_results)
-        results_writer.writerow(['ips Not Found'])
+        results_writer.writerow(['ips Not Found','','',''])
         for ip in ip_not_found:
-            results_writer.writerow([ip])
+            results_writer.writerow([ip,'','',''])
 
 def print_output(communication_list, ip_not_found):
     #since an IP can be found more than once (talking to more then 1 destination) we want a set of the total to get unique count. 
