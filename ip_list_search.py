@@ -21,7 +21,7 @@ with open('iplist.csv', mode='r') as csv_file:
 
 #build the filter applying each IP address
 def build_filter():
-    filter_object = {"sdfDips_0": "in_0A010104_0A010104-12"}
+    filter_object = {"sdfDips_0": "in_GROUP_ALL"}
     for ip_address in range(len(ip_list)):    
         filter_object["sdfIps_{}".format(ip_address)] = "in_{}_src".format(ip_list[ip_address])
     return filter_object
