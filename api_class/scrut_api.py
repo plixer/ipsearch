@@ -73,7 +73,7 @@ class scrut_data_requested:
                  data_requested={"inbound": {
                      "graph":"all",
                      "table": {
-                         "query_limit": {"offset": 0, "max_num_rows": 10}
+                         "query_limit": {"offset": 0, "max_num_rows": 1000}
                      }
                  }
                  }):
