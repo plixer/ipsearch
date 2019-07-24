@@ -50,7 +50,7 @@ def summarize_communication(scrutinizer_data):
         ip_found = connection[1]['rawValue']
         application_used = connection[2]['rawValue']
         destination_ip = connection[3]['rawValue']
-        bits_transfered = connection[8]['label']
+        bits_transfered = connection[7]['label']
 
         #summarize data in dictionary
         summary_of_communication = {

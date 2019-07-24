@@ -1,4 +1,4 @@
 {
-    "hostname":"IP or Hostname of Reporter",
-    "authToken": "Scrutinizer authtoken"
+    "hostname":"scrutinizer.plxr.local",
+    "authToken": "M5bL17c0VBI56vAAp7H8a2Uf"
 }
