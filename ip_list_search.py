@@ -28,10 +28,9 @@ def build_filter():
 
 
 #get JSON data from Scrutinizer API. 
-def get_scrutinizer_data(scrut_client,report):
+def get_scrutinizer_data(scrut_client):
     filter_object = build_filter()
-    report_object = scrut_api.scrut_json(filters=filter_object,
-                               reportTypeLang=report)
+    report_object = scrut_api.scrut_json(filters=filter_object)
     report_format = scrut_api.scrut_data_requested()
     # load up params to be passed to request
     params = scrut_api.scrut_params(
@@ -98,7 +97,7 @@ def print_output(communication_list, ip_not_found):
 
 
 
-ip_communication = get_scrutinizer_data(client, 'conversationsApp' )
+ip_communication = get_scrutinizer_data(client)
 communication_list = summarize_communication(ip_communication)
 ip_not_found = not_found(communication_list)
 write_output(communication_list, ip_not_found )

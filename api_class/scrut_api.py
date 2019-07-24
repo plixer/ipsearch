@@ -34,7 +34,7 @@ class scrut_json:
     '''
     def __init__(
         self,
-        reportTypeLang="applications",
+        reportTypeLang="conversationsApp",
         reportDirections={"selected": "inbound"},
         dataGranularity={"selected": "auto"},
         orderBy="sum_octetdeltacount",
