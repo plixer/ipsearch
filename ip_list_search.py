@@ -65,12 +65,22 @@ def summarize_communication(scrutinizer_data):
 
 #figure out what IP's provide were not found in search
 def not_found(communication_list):
+    #copy original list of ip's
     ips_not_found = ip_list.copy()
-    for ip_address in range(len(ip_list)):
+    #create a list to de-duplicate all source IPs. A source IP can show up twice since it can communicate with more then 1 dest. 
+    src_ip= []
+
+    for ip in communication_list:
+        src_ip.append(ip['ip_found'])
+    #deduplicate list
+    src_ip = list(dict.fromkeys(src_ip))
+
+    for ip_address in range(len(ips_not_found)):
         try:
-            ips_not_found.remove(communication_list[ip_address]['ip_found'])
+            ips_not_found.remove(src_ip[ip_address])
         except:
             pass
+
     return ips_not_found
 
 def write_output(communication_list, ip_not_found):

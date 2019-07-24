@@ -1,4 +1,4 @@
 {
-    "hostname":"Scrutinizer IP or Hostname",
-    "authToken": "Scrutinizer Auth Token"
+    "hostname":"IP or Hostname of Reporter",
+    "authToken": "Scrutinizer authtoken"
 }
