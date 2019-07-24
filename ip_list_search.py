@@ -5,7 +5,7 @@ import json
 with open('settings.json') as config:
     config = json.load(config)
 
-print(config) 
+
 #set up connection to Scrutinizer. 
 client = scrut_api.scrut_api_client(
     hostname=config["hostname"],
