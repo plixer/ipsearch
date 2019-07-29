@@ -181,8 +181,8 @@ class scrut_host_search:
                             "Host Searched For": ip_hit['results']['host_searched'],
                             "Number of Exporters Seen On": len(ip_hit['results']['just_exporters']),
                             "Total Number of Connections": ip_hit['results']['aggregate_connections'],
-                            "List of Exporters Found On":(ip_hit['results']['just_exporters']),
-                            
+                            "List of Exporters Found On": (ip_hit['results']['just_exporters']),
+
 
                         }
                         results_writer.writerow(dict_to_write)
@@ -201,16 +201,18 @@ class scrut_host_search:
                     print(e)
             with open('./csv_output/index_results.csv', mode='a',  newline='') as search_results:
                 results_columns = ["Hosts Not Found"]
-                results_writer = csv.DictWriter(search_results, results_columns)
+                results_writer = csv.DictWriter(
+                    search_results, results_columns)
                 results_writer.writeheader()
                 for ip in self.index_not_found:
                     dict_to_write = {
-                        "Hosts Not Found": ip
+                        "Hosts Not Found": ip,
+                        "Unique Exporter": '',
+                        "First Seen":  '',
+                        "Last Seen": '',
+                        "Connections per Exporter":  ''
                     }
                     results_writer.writerow(dict_to_write)
-
-
-
 
             # print(self.index_formatted)
             print('Writing Host Index to CSV')
