@@ -6,7 +6,7 @@ requests.packages.urllib3.disable_warnings()
 
 
 class scrut_api_client:
-    #class used to initiated the Scrutinizer client
+    # class used to initiated the Scrutinizer client
     def __init__(
             self,
             verify=False,
@@ -29,9 +29,10 @@ class scrut_json:
     Used to generate JSON data that will be posted to scrutinizers API. All arguments that are passed have default sets, you can modify any of them you choose. 
     If you want to add in other JSON calls to api you would need to add property with that json and reference it when you send the data into the scrut_params class. 
     self.status_json is an example of this. 
-    
-    
+
+
     '''
+
     def __init__(
         self,
         reportTypeLang="conversationsApp",
@@ -46,7 +47,8 @@ class scrut_json:
         dataFormat={"selected": "normal"},
         bbp={"selected": "bits"},
         view="topInterfaces",
-        unit="percent"):
+        unit="percent", 
+        host = None):
 
         self.report_json = {
 
@@ -65,13 +67,21 @@ class scrut_json:
             "view": view,
             "unit": unit
         }
+        self.index_json = {
+            "rm": "quick_search",
+            "view": "quick_search",
+            "action": "check_hosts",
+        }
+
+
 
 
 class scrut_data_requested:
     ''' Currently this class is only used when your using the report_json property. The scrut_params class is what will receive this data, it has error checking to make sure the .format property is passed if the user is sending report_json, if the user is sending status_json the then this data will be ignored (as it is not needed)'''
+
     def __init__(self,
                  data_requested={"inbound": {
-                     "graph":"all",
+                     "graph": "all",
                      "table": {
                          "query_limit": {"offset": 0, "max_num_rows": 1000}
                      }
@@ -82,39 +92,52 @@ class scrut_data_requested:
 
 class scrut_params:
     '''This class binds together the client, with the json_data, and the data_requested. whatever variable you use to initate this class will be passted into scrut_request'''
+
     def __init__(self,
                  run_mode="report_api",
                  action="get",
                  json_data="",
                  data_requested=None,
                  client=""):
-                try:
-                    if json_data['view'] == "topInterfaces":
-                        self.data_for_req = {
-                                "rm": "status",
-                                "action": action,
-                                "rpt_json": json.dumps(json_data),
-                                "authToken": client.authToken
-                                }
-                except:
-                     if isinstance(data_requested, scrut_data_requested):
-                         raise ValueError('Make sure the instance of scrut_data_requested is passed with the .format property')
-                     else:
-                        self.data_for_req = {
-                            "rm": run_mode,
-                            "action": action,
-                            "rpt_json": json.dumps(json_data),
-                            "data_requested": json.dumps(data_requested),
-                            "authToken": client.authToken
-                                }
+        try:
+            if json_data['view'] == "topInterfaces":
+                self.data_for_req = {
+                    "rm": "status",
+                    "action": action,
+                    "rpt_json": json.dumps(json_data),
+                    "authToken": client.authToken
+                }
+        except:
+            if isinstance(data_requested, scrut_data_requested):
+                raise ValueError(
+                    'Make sure the instance of scrut_data_requested is passed with the .format property')
+            else:
+                self.data_for_req = {
+                    "rm": run_mode,
+                    "action": action,
+                    "rpt_json": json.dumps(json_data),
+                    "data_requested": json.dumps(data_requested),
+                    "authToken": client.authToken
+                }
 
+        self.url = client.url
+        self.verify = client.verify
 
-                self.url = client.url
-                self.verify = client.verify
-
+class index_params:
+    def __init__(self, host = None, client = None, json_data = None):
+        self.data_for_req = {
+            "rm": "quick_search",
+            "view": "quick_search",
+            "action": "check_hosts",
+            "data_requested":json.dumps({"hosts": ["{}".format(host)]}),
+            "authToken": client.authToken
+        }
+        self.url = client.url
+        self.verify = client.verify
 
 class scrut_request:
     '''Handles the request portion of the api call. This uses the requests library from python. The .resp property holds the request object and the .data property holds it converted to JSON'''
+
     def __init__(self, params):
         self.resp = requests.get(
             params.url, params=params.data_for_req, verify=params.verify)
@@ -123,6 +146,7 @@ class scrut_request:
 
 class scrut_print:
     '''Most used for error check and seeing the data Scrutinizer is returning. It prints the JSON data out in a nicely formatted way to make it easier to read.'''
+
     def __init__(self, data_to_print):
         self.scrut_class = data_to_print
         if isinstance(data_to_print, dict):
