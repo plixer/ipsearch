@@ -1,5 +1,6 @@
 import csv
 import json
+import os
 
 
 class scrut_host_search:
@@ -152,7 +153,7 @@ class scrut_host_search:
             print("Writing Saved Flows search to CSV")
             csv_columns = ["host_searched", "application used",
                            "destination_ip", "bits_transfered"]
-            with open('search_results.csv', mode='w',  newline='') as search_results:
+            with open('./csv_output/search_results.csv', mode='w',  newline='') as search_results:
                 results_writer = csv.DictWriter(search_results, csv_columns)
                 results_writer.writeheader()
                 for ip_hit in self.flows_formatted:
@@ -163,7 +164,7 @@ class scrut_host_search:
                 for ip in self.flows_not_found:
                     results_writer.writerow([ip, '', '', ''])
         else:
-            with open('index_results.csv', mode='w',  newline='') as search_results, open('index_detailed.csv', mode='w', newline='') as detailed_results:
+            with open('./csv_output/index_results.csv', mode='w',  newline='') as search_results, open('./csv_output/index_detailed.csv', mode='w', newline='') as detailed_results:
                 results_columns = ["Host Searched For", "Number of Exporters Seen On",
                                    "Total Number of Connections", "List of Exporters Found On", "List of Exporters Not found"]
                 detailed_columns = [
@@ -198,7 +199,7 @@ class scrut_host_search:
                             detailed_writer.writerow(detailed_to_write)
                 except Exception as e:
                     print(e)
-            with open('index_results.csv', mode='a',  newline='') as search_results:
+            with open('./csv_output/index_results.csv', mode='a',  newline='') as search_results:
                 results_columns = ["Hosts Not Found"]
                 results_writer = csv.DictWriter(search_results, results_columns)
                 results_writer.writeheader()
