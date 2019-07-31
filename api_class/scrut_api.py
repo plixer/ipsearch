@@ -2,6 +2,7 @@ import requests
 import requests.packages.urllib3
 import json
 import csv
+import sys
 
 requests.packages.urllib3.disable_warnings()
 
@@ -196,9 +197,14 @@ class scrut_request:
     '''Handles the request portion of the api call. This uses the requests library from python. The .resp property holds the request object and the .data property holds it converted to JSON'''
 
     def __init__(self, params):
-        self.resp = requests.get(
-            params.url, params=params.data_for_req, verify=params.verify)
-        self.data = self.resp.json()
+        try: 
+            self.resp = requests.get(
+                params.url, params=params.data_for_req, verify=params.verify)
+            self.data = self.resp.json()
+        except requests.exceptions.RequestException as e:  # This is the correct syntax
+            print("Oops! \n Looks like the request to Scrutinizer failed. Did you update the settings.json file with the correct host? \n I received {}".format(params.url))
+            print("here is the error from the request module: \n \n {}".format(e))
+            sys.exit(1)
 
 
 class scrut_print:
