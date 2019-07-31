@@ -4,6 +4,7 @@ import csv
 import json
 
 
+
 with open('settings.json') as config:
     config = json.load(config)
 
