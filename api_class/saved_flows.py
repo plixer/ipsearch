@@ -1,6 +1,7 @@
 import csv
 import json
 import os
+import itertools
 
 
 class scrut_host_search:
@@ -17,6 +18,7 @@ class scrut_host_search:
         self.flows_not_found = None
         self.scrut_api = scrut_api  # pass in entire scrut_api class to used in methos
         self.search_type = search_type
+        self.test_filter = {"sdfDips_0": "in_GROUP_ALL"}
 
     # import a list, to build a filter object.
     def import_list(self, path_to_csv):
@@ -26,9 +28,14 @@ class scrut_host_search:
             list_of_ips = csv.reader(csv_file, delimiter=',')
             for ip in list_of_ips:
                 self.ip_list.append(ip[0])
+
         for ip_address in range(len(self.ip_list)):
             self.filter_object["sdfIps_{}".format(ip_address)] = "in_{}_src".format(
                 self.ip_list[ip_address])
+    
+    def ip_grouper(self, ip_list, ip_per_group, fillvalue=None):
+        args = [iter(ip_list)] * ip_per_group
+        return itertools.zip_longest(*args, fillvalue=fillvalue)
 
     # makes the request to scrutinizer API using scrut_api class.
     # can pass in time range and granularity if desired.
@@ -38,23 +45,46 @@ class scrut_host_search:
         dataGranularity="auto"
     ):
         if self.search_type == None:
-            # block used for saved flows
-            print("ASKING SCRUTINIZER FOR SAVED FLOWS DATA")
-            report_object = self.scrut_api.scrut_json(
-                filters=self.filter_object,
-                times={"dateRange": time_range},
-                dataGranularity={"selected": dataGranularity}
-            )
-            report_format = self.scrut_api.scrut_data_requested()
-            # load up params to be passed to request
-            params = self.scrut_api.scrut_params(
-                client=self.scrut_client,
-                json_data=report_object.report_json,
-                data_requested=report_format.format)
-            flows_raw = self.scrut_api.scrut_request(params)
-            self.flows_raw = flows_raw.data
+            list_length = len(self.ip_list)
+            group_size = len(self.ip_list)
+            if list_length>10 and list_length<50:
+                group_size = 5
+            elif list_length>50 and list_length<100:
+                group_size = 10
+            elif list_length>100:
+                group_size = 15                
+           
+            group_of_ips = self.ip_grouper(self.ip_list, group_size)
+            print("you supplied {} ip addresses total, searching in groups of {}".format(list_length, group_size))
+            loops_total = list_length/group_size
+            current_loop = 1
+            for group in list(group_of_ips):
 
-            self.summarize_data()
+                for ip_address in range(len(group)):
+                    self.test_filter["sdfIps_{}".format(ip_address)] = "in_{}_src".format(
+                        self.ip_list[ip_address])
+
+                report_object = self.scrut_api.scrut_json(
+                    filters=self.filter_object,
+                    times={"dateRange": time_range},
+                    dataGranularity={"selected": dataGranularity}
+                )
+
+                report_format = self.scrut_api.scrut_data_requested()
+            # load up params to be passed to request
+                test_params = self.scrut_api.scrut_params(
+                    client=self.scrut_client,
+                    json_data=report_object.report_json,
+                    data_requested=report_format.format)
+                flows_raw = self.scrut_api.scrut_request(test_params)
+                self.flows_raw = flows_raw.data
+                self.summarize_data()
+                percent_done = int(current_loop/loops_total *100)
+                if percent_done < 100:
+                    print("Search {}% complete".format(percent_done))
+                else:
+                    print("Search completed!!")
+                current_loop +=1          
         else:
             # block used for host index search
             print("ASKING SCRUTINIZER FOR INDEX DATA")

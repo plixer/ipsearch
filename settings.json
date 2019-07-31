@@ -1,6 +1,6 @@
 {
-    "hostname": "scrut_host",
-    "authToken" : "scrut_host_api_key",
+    "hostname": "scrutinizer_host",
+    "authToken" : "scrutinizer_api_key",
     "path_to_ips": "iplist.csv"
     
 }
