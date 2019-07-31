@@ -37,7 +37,6 @@ class scrut_host_search:
         time_range="LastFiveMinutes",
         dataGranularity="auto"
     ):
-        print(self.search_type)
         if self.search_type == None:
             # block used for saved flows
             print("ASKING SCRUTINIZER FOR SAVED FLOWS DATA")
@@ -159,7 +158,7 @@ class scrut_host_search:
                 results_writer.writeheader()
                 for ip_hit in self.flows_formatted:
                     results_writer.writerow(ip_hit['results'])
-            with open('search_results.csv', mode='a',  newline='') as search_results:
+            with open('./csv_output/search_results.csv', mode='a',  newline='') as search_results:
                 results_writer = csv.writer(search_results)
                 results_writer.writerow(['ips Not Found', '', '', ''])
                 for ip in self.flows_not_found:
