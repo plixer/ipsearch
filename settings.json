@@ -1,5 +1,5 @@
 {
-    "hostname":"scrutinizer_host_name",
-    "authToken": "scrutinizer_auth_token"
+    "hostname": "scrutinizer.plxr.local",
+    "authToken" : "M5bL17c0VBI56vAAp7H8a2Uf"
     
 }

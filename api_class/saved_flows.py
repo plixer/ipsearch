@@ -37,7 +37,7 @@ class scrut_host_search:
         time_range="LastFiveMinutes",
         dataGranularity="auto"
     ):
-
+        print(self.search_type)
         if self.search_type == None:
             # block used for saved flows
             print("ASKING SCRUTINIZER FOR SAVED FLOWS DATA")
@@ -59,12 +59,11 @@ class scrut_host_search:
         else:
             # block used for host index search
             print("ASKING SCRUTINIZER FOR INDEX DATA")
-            report_object = self.scrut_api.scrut_json()
-            for ip in self.ip_list:
 
+
+            for ip in self.ip_list:
                 params = self.scrut_api.index_params(
                     client=self.scrut_client,
-                    json_data=report_object,
                     host=ip)
 
                 flows_raw = self.scrut_api.scrut_request(params)

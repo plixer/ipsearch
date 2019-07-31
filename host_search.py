@@ -10,7 +10,6 @@ with open('settings.json') as config:
 
 
 #set up connection to Scrutinizer.
- 
 client = scrut_api.scrut_api_client(
     hostname=config["hostname"],
     authToken=config["authToken"])
@@ -27,13 +26,13 @@ try:
         flows_searcher.get_scrutinizer_data()
         flows_searcher = saved_flows.scrut_host_search(scrut_api,client)
         flows_searcher.import_list('iplist.csv')
-        flows_searcher.get_scrutinizer_data()               
-except:
-    flows_searcher = saved_flows.scrut_host_search(scrut_api,client)
-    flows_searcher.import_list('iplist.csv')
-    flows_searcher.get_scrutinizer_data()     
+        flows_searcher.get_scrutinizer_data()
 
-
+               
+except Exception as e:
+        flows_searcher = saved_flows.scrut_host_search(scrut_api,client)
+        flows_searcher.import_list('iplist.csv')
+        flows_searcher.get_scrutinizer_data()   
 
 
 

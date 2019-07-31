@@ -1,6 +1,7 @@
 import requests
 import requests.packages.urllib3
 import json
+import csv
 
 requests.packages.urllib3.disable_warnings()
 
@@ -47,8 +48,8 @@ class scrut_json:
         dataFormat={"selected": "normal"},
         bbp={"selected": "bits"},
         view="topInterfaces",
-        unit="percent", 
-        host = None):
+        unit="percent",
+            host=None):
 
         self.report_json = {
 
@@ -72,8 +73,6 @@ class scrut_json:
             "view": "quick_search",
             "action": "check_hosts",
         }
-
-
 
 
 class scrut_data_requested:
@@ -123,17 +122,75 @@ class scrut_params:
         self.url = client.url
         self.verify = client.verify
 
+
 class index_params:
-    def __init__(self, host = None, client = None, json_data = None):
+    def __init__(self, host=None, client=None):
         self.data_for_req = {
             "rm": "quick_search",
             "view": "quick_search",
             "action": "check_hosts",
-            "data_requested":json.dumps({"hosts": ["{}".format(host)]}),
+            "data_requested": json.dumps({"hosts": ["{}".format(host)]}),
             "authToken": client.authToken
         }
         self.url = client.url
         self.verify = client.verify
+
+
+class create_ip_groups:
+    def __init__(self, client=None):
+
+        self.url = client.url
+        self.verify = client.verify
+        self.authToken = client.authToken
+        self.ip_list = []
+        self.filter_object = []
+
+    def import_list(self, path_to_csv):
+
+        # open up CSV file and create a list of IP addresses.
+        with open(path_to_csv, mode='r') as csv_file:
+            list_of_ips = csv.reader(csv_file, delimiter=',')
+            for ip in list_of_ips:
+                self.ip_list.append(ip[0])
+
+    def make_filter_object(self):
+        for ip in self.ip_list:
+            ip_to_add = {
+                "type":"ip",
+                "address": ip}
+            self.filter_object.append(ip_to_add)
+
+
+    def create_group(self, group_name=None, ip_list = None):
+        self.data_for_req = {
+            "rm": "ipgroups",
+            "action": "add",
+            "added": json.dumps(ip_list),
+            "name": group_name,
+            "authToken": self.authToken
+        }
+
+    def delete_ip_group(self, group_id):
+        self.data_for_req = {
+            "rm": "ipgroups",
+            "json": json.dumps([{"id": group_id}]),
+            "action": "delete",
+            "subCat": "IPGroups",
+            "authToken": self.authToken
+        }
+
+    def find_ip_groups(self):
+        self.data_for_req = {
+            "rm": "ipgroups",
+            "view": "IPGroups",
+            "authToken": self.authToken
+        }
+
+    def find_ip_group(self, data, ip_group):
+        for ip in data['rows']:
+            if ip[1]['fc_name'] == ip_group:
+                self.id = ip[1]['fc_id']
+
 
 class scrut_request:
     '''Handles the request portion of the api call. This uses the requests library from python. The .resp property holds the request object and the .data property holds it converted to JSON'''
