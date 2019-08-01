@@ -18,22 +18,34 @@ client = scrut_api.scrut_api_client(
 ip_list = config["path_to_ips"]
 
 try:
-    if sys.argv[1] == 'fast':
-        flows_searcher = saved_flows.scrut_host_search(scrut_api,client, search_type='fast')
-        flows_searcher.import_list(ip_list)
-        flows_searcher.get_scrutinizer_data()
-    if sys.argv[1] == 'both':
-        flows_searcher = saved_flows.scrut_host_search(scrut_api,client, search_type='fast')
-        flows_searcher.import_list(ip_list)
-        flows_searcher.get_scrutinizer_data()
-        flows_searcher = saved_flows.scrut_host_search(scrut_api,client)
-        flows_searcher.import_list(ip_list)
-        flows_searcher.get_scrutinizer_data()
-               
+    args = sys.argv[1]
 except:
+    args = "normal"
+
+try:
+    if args == 'fast':
+        flows_searcher = saved_flows.scrut_host_search(scrut_api,client, search_type='fast')
+        flows_searcher.import_list(ip_list)
+        flows_searcher.get_scrutinizer_data()
+    elif args == 'both':
+        flows_searcher = saved_flows.scrut_host_search(scrut_api,client, search_type='fast')
+        flows_searcher.import_list(ip_list)
+        flows_searcher.get_scrutinizer_data()
         flows_searcher = saved_flows.scrut_host_search(scrut_api,client)
         flows_searcher.import_list(ip_list)
-        flows_searcher.get_scrutinizer_data()   
+        flows_searcher.get_scrutinizer_data()
+    elif args == 'normal':
+        flows_searcher = saved_flows.scrut_host_search(scrut_api,client)
+        flows_searcher.import_list(ip_list)
+        flows_searcher.get_scrutinizer_data()
+    else:
+        print("Please Enter a Command Line Arg")   
+               
+except Exception as e:
+    print('in here')
+    print(e)
+    pass
+
 
 
 
