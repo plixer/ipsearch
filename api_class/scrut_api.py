@@ -21,7 +21,7 @@ class scrut_api_client:
             raise ValueError(
                 "You need an authentication token in settings.json")
 
-        self.url = "https://{}/fcgi/scrut_fcgi.fcgi".format(hostname)
+        self.url = "{}/fcgi/scrut_fcgi.fcgi".format(hostname)
         self.verify = verify
         self.authToken = authToken
 
@@ -119,6 +119,7 @@ class scrut_params:
                     "data_requested": json.dumps(data_requested),
                     "authToken": client.authToken
                 }
+                print(self.data_for_req)
 
         self.url = client.url
         self.verify = client.verify
@@ -144,7 +145,9 @@ class create_ip_groups:
         self.verify = client.verify
         self.authToken = client.authToken
         self.ip_list = []
+        self.subnet_list = []
         self.filter_object = []
+        self.subnet_object = []
 
     def import_list(self, path_to_csv):
 
@@ -161,8 +164,22 @@ class create_ip_groups:
                 "address": ip}
             self.filter_object.append(ip_to_add)
 
+    def make_subnet_object(self):
+        print("making subnet object")
+        for subnet in self.ip_list:
+            split_sub = (subnet.split('/'))
+            subnet_to_add = {
+                "type":"network",
+                "address":split_sub[0],
+                "mask":split_sub[1]
+
+            }
+            self.subnet_object.append(subnet_to_add)
+
+
 
     def create_group(self, group_name=None, ip_list = None):
+        print("creating IP group")
         self.data_for_req = {
             "rm": "ipgroups",
             "action": "add",
@@ -172,6 +189,7 @@ class create_ip_groups:
         }
 
     def delete_ip_group(self, group_id):
+        print("Deleting Ip group")
         self.data_for_req = {
             "rm": "ipgroups",
             "json": json.dumps([{"id": group_id}]),
@@ -181,13 +199,28 @@ class create_ip_groups:
         }
 
     def find_ip_groups(self):
+        print("finding Ip groups")
         self.data_for_req = {
             "rm": "ipgroups",
             "view": "IPGroups",
             "authToken": self.authToken
         }
 
+    def create_ip_subnet(self,group_name=None, subnet_list = None ):
+        print("creating ipgroup based on subnet")
+
+        self.data_for_req = {
+            "rm":"ipgroups",
+            "name":group_name,
+            "added":json.dumps(subnet_list), 
+            "action":"add",
+            "subCat":"IPGroups",
+            "authToken": self.authToken
+
+        }
+
     def find_ip_group(self, data, ip_group):
+        print("finding ip group ")
         for ip in data['rows']:
             if ip[1]['fc_name'] == ip_group:
                 self.id = ip[1]['fc_id']
@@ -201,6 +234,9 @@ class scrut_request:
             self.resp = requests.get(
                 params.url, params=params.data_for_req, verify=params.verify)
             self.data = self.resp.json()
+            print(self.data)
+            print("Data Gathered Successsfull")
+           
         except requests.exceptions.RequestException as e:  # This is the correct syntax
             print("Oops! \n Looks like the request to Scrutinizer failed. Did you update the settings.json file with the correct host? \n I received {}".format(params.url))
             print("here is the error from the request module: \n \n {}".format(e))

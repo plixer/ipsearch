@@ -20,5 +20,13 @@ In the api_class folder you will find a scrut_api.py file. This is used to modif
 
 'testgroup' will be the name used to create the IPGROUP within Scrutinizer. You can then use that IPGROUP when doing interactive searched in the Scrutinizer UI. 
 
-* **python add_group.py create testgroup**
-* **python add_group.py delete testgroup**
+In the configuration file you can place two paths  "path_to_ips": "iplist.csv",  "path_to_subnets":"ipsubnets.csv". If you want to creeate the ipgroup based off a list of subnets you need to pass "subnet" as your third CLI argument, if you would like to use your list of IPs pass "ip".
+
+### created ipgroup based off of list of IPs
+
+* **python add_group.py create testgroup ip**
+* **python add_group.py delete testgroup ip**
+
+### created ipgroup based off of list of Subnets
+* **python add_group.py create testgroup subnet**
+* **python add_group.py delete testgroup subnet**

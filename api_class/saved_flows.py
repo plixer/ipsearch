@@ -52,7 +52,9 @@ class scrut_host_search:
             elif list_length>50 and list_length<100:
                 group_size = 10
             elif list_length>100:
-                group_size = 15                
+                group_size = 15
+            elif list_length>1000:
+                group_size = 100              
            
             group_of_ips = self.ip_grouper(self.ip_list, group_size)
             print("you supplied {} ip addresses total, searching in groups of {}".format(list_length, group_size))
@@ -71,11 +73,13 @@ class scrut_host_search:
                 )
 
                 report_format = self.scrut_api.scrut_data_requested()
+                print(report_object.report_json)
             # load up params to be passed to request
                 test_params = self.scrut_api.scrut_params(
                     client=self.scrut_client,
                     json_data=report_object.report_json,
                     data_requested=report_format.format)
+                
                 flows_raw = self.scrut_api.scrut_request(test_params)
                 self.flows_raw = flows_raw.data
                 self.summarize_data()
@@ -91,11 +95,13 @@ class scrut_host_search:
 
 
             for ip in self.ip_list:
+                print("searching for ip {}".format(ip))
                 params = self.scrut_api.index_params(
                     client=self.scrut_client,
                     host=ip)
 
                 flows_raw = self.scrut_api.scrut_request(params)
+                
                 self.index_raw.append(flows_raw.data)
                 self.summarize_data(
                     host_searched=ip, host_returned=flows_raw.data)
@@ -106,6 +112,7 @@ class scrut_host_search:
     # summarizes data the data thats returned from scrut api.
 
     def summarize_data(self, host_searched=None, host_returned=None):
+
         # block used to summarize saved flows data
         if self.search_type == None:
             for connection in self.flows_raw['report']['table']['inbound']['rows']:
@@ -134,11 +141,19 @@ class scrut_host_search:
                     'aggregate_connections': 0
                 }
             }
+            if len(host_returned['rows']) > 0:
+                print('Data found for this host')
             for ip in host_returned['rows']:
+
                 exporter_ip = ip[0]['label']
                 first_seen = ip[1]['label']
                 last_seen = ip[2]['label']
                 connection = ip[3]['label']
+                print(connection)
+
+                if connection == 'N/A':
+                    print("no data found")
+                    connection = 0
                 all_results = {
                     'exporter': exporter_ip,
                     'first_time': first_seen,

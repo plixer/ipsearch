@@ -17,6 +17,8 @@ client = scrut_api.scrut_api_client(
 
 ip_list = config["path_to_ips"]
 
+
+
 try:
     args = sys.argv[1]
 except:
@@ -42,7 +44,7 @@ try:
         print("Please Enter a Command Line Arg")   
                
 except Exception as e:
-    print('in here')
+    print('Error')
     print(e)
     pass
 

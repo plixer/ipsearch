@@ -1,6 +1,7 @@
 {
-    "hostname": "scrutinizer_host_name",
-    "authToken" : "scrutinizer_api_token",
-    "path_to_ips": "iplist.csv"
+    "hostname": "https://yourscrutIP or http://yourscrutip",
+    "authToken" : "scrutinizer_auth_token",
+    "path_to_ips": "iplist.csv",
+    "path_to_subnets":"ipsubnets.csv"
     
 }
