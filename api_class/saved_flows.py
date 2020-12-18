@@ -2,6 +2,129 @@ import csv
 import json
 import os
 import itertools
+import ipaddress
+
+
+
+class convert_subnet:
+    def __init__(self):
+        return
+    
+
+
+    def create_list(self, subnet):
+        list_of_ips = [str(ip) for ip in ipaddress.IPv4Network(subnet)]
+        return list_of_ips
+
+
+class host_index_formatter:
+    def __init_(self):
+        return
+
+    def format_data(self, index_json, host_searched = None):
+        index_formatted = []
+
+        object_returned = {
+                'results': {
+                    'host_searched': host_searched,
+                    'just_exporters': [],
+                    'all_results': [],
+                    'aggregate_connections': 0
+                }
+            }
+
+
+        try:
+            if len(index_json['rows']) > 0:
+                print('Data found for {}'.format(host_searched))
+            elif len(index_json['rows']) == 0:
+                print('No Data found for {}'.format(host_searched))
+        except:
+            print("data returned did not include 'rows' key")
+            print(index_json)
+            return
+
+        try: 
+            for ip in index_json['rows']:
+
+                exporter_ip = ip[0]['label']
+                first_seen = ip[1]['label']
+                last_seen = ip[2]['label']
+                connection = ip[3]['label']
+
+                if connection == 'N/A':
+                    print("no data found")
+                    connection = 0
+                all_results = {
+                    'exporter': exporter_ip,
+                    'first_time': first_seen,
+                    'last_time': last_seen,
+                    'connections': connection
+                }
+
+                object_returned["results"]['just_exporters'].append(
+                    exporter_ip)
+                object_returned["results"]['all_results'].append(all_results)
+                object_returned["results"]['aggregate_connections'] += int(
+                    connection)
+            if len(object_returned['results']['just_exporters']) > 0:
+                index_formatted.append(object_returned)
+        
+        except:
+            pass
+
+        return index_formatted
+
+class csv_output_writer():
+    def __init__(self):
+        self.request_columns = ["Host Searched For", "Number of Exporters Seen On", "Total Number of Connections", "List of Exporters Found On"]
+        self.detailed_columns = ["Host Searched For", "Unique Exporter", "Connections per Exporter", "First Seen", "Last Seen"]
+
+
+        return
+
+    def create_headers(self):
+        with open('./csv_output/index_results.csv', mode='w',  newline='') as search_results, open('./csv_output/index_detailed.csv', mode='w', newline='') as detailed_results:
+            results_writer = csv.DictWriter(search_results, self.request_columns)
+            detailed_writer = csv.DictWriter(detailed_results, self.detailed_columns)
+            results_writer.writeheader()
+            detailed_writer.writeheader()
+
+    def write_index_data(self, formatted_data):
+        print("writing data to CSV Files")
+        with open('./csv_output/index_results.csv', mode='a',  newline='') as search_results, open('./csv_output/index_detailed.csv', mode='a', newline='') as detailed_results:            
+            results_writer = csv.DictWriter(search_results, self.request_columns)
+            detailed_writer = csv.DictWriter(detailed_results, self.detailed_columns)
+
+            try:
+                for ip_hit in formatted_data:
+                    dict_to_write = {
+                            "Host Searched For": ip_hit['results']['host_searched'],
+                            "Number of Exporters Seen On": len(ip_hit['results']['just_exporters']),
+                            "Total Number of Connections": ip_hit['results']['aggregate_connections'],
+                            "List of Exporters Found On":(ip_hit['results']['just_exporters'])}
+
+                    results_writer.writerow(dict_to_write)
+                    
+                    for unique_result in ip_hit['results']['all_results']:
+
+                        detailed_to_write = {
+                                "Host Searched For": ip_hit['results']['host_searched'],
+                                "Unique Exporter": unique_result['exporter'],
+                                "First Seen":  unique_result['first_time'],
+                                "Last Seen":  unique_result['last_time'],
+                                "Connections per Exporter":  unique_result['connections']
+
+                            }
+                        detailed_writer.writerow(detailed_to_write)
+                print("raw results written to index_results.csv")
+                print("detailed results written to index_detailed.csv")
+            except:
+                pass
+            return
+
+
+
 
 
 class scrut_host_search:
@@ -142,7 +265,7 @@ class scrut_host_search:
                 }
             }
             if len(host_returned['rows']) > 0:
-                print('Data found for this host')
+                print('Data found for {}'.format(host_searched))
             for ip in host_returned['rows']:
 
                 exporter_ip = ip[0]['label']

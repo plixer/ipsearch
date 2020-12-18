@@ -1,6 +1,6 @@
 {
-    "hostname": "https://yourscrutIP or http://yourscrutip",
-    "authToken" : "scrutinizer_auth_token",
+    "hostname": "http://10.60.2.19",
+    "authToken" : "fdSjLHOExU7_FDB3qDdGivtm",
     "path_to_ips": "iplist.csv",
     "path_to_subnets":"ipsubnets.csv"
     
