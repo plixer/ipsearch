@@ -1,6 +1,6 @@
 {
-    "hostname": "http://10.60.2.19",
-    "authToken" : "fdSjLHOExU7_FDB3qDdGivtm",
+    "hostname": "http:/yourscrutinizer",
+    "authToken" : "yourauth",
     "path_to_ips": "iplist.csv",
     "path_to_subnets":"ipsubnets.csv"
     
