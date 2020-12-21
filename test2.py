@@ -66,6 +66,9 @@ class Host_searcher():
 
     def inner_join(self,table):
         return("SELECT inet_b2a(host_id),ip FROM plixer.hosts_index INNER JOIN {} ON ip = inet_b2a(host_id);".format(table))
+
+    def inner_joins(self,table):
+        return("SELECT inet_b2a(host_id) , inet_b2a(exporter_id),* FROM plixer.hosts_index INNER JOIN {} ON ip = inet_b2a(host_id);".format(table))
         
 
 # config = configparser.ConfigParser()
@@ -78,7 +81,7 @@ class Host_searcher():
 
 
 
-db_handler = DB_handler('plixer','scrutremote','admin','127.0.0.1')
+db_handler = DB_handler('plixer','root','admin','127.0.0.1')
 
 path_to_csv = '/home/plixer/scrutinizer/files/ipsearch/sunburst/ips.csv'
 
@@ -92,26 +95,26 @@ create_table_query = host_search.create_table('sun')
 
 copy_csv = host_search.copy_csv('sun',path_to_csv)
 
-inner_join = host_search.inner_join('sun')
+inner_join = host_search.inner_joins('sun')
 
 
-print(create_table_query)
+# print(create_table_query)
 
-print(copy_csv)
+# print(copy_csv)
 
-print(inner_join)
-# query_test = host_search.all_hosts()
+# print(inner_join)
+# # query_test = host_search.all_hosts()
 
-try:
-    db_handler.execute_query(create_table_query)
-except:
-    db_handler.close_connection()
+# try:
+#     db_handler.execute_query(create_table_query)
+# except:
+#     db_handler.close_connection()
 
-    pass
+#     pass
 
-db_handler.open_connection()
+# db_handler.open_connection()
 
-db_handler.execute_query(copy_csv)
+# db_handler.execute_query(copy_csv)
 
 results = db_handler.execute_query(inner_join)
 
