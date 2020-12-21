@@ -81,7 +81,7 @@ db_handler.open_connection()
 
 
 create_table_query = host_search.create_table('sunburst')
-
+copy_csv = host_search.copy_csv('sunburst',path_to_csv)
 
 
 inner_join = host_search.inner_joins('sunburst')
@@ -89,7 +89,8 @@ inner_join = host_search.inner_joins('sunburst')
 
 try:
     db_handler.execute_query(create_table_query)
-    copy_csv = host_search.copy_csv('sunburst',path_to_csv)
+    db_handler.execute_query(copy_csv)
+    
 except:
     db_handler.close_connection()
 
@@ -97,7 +98,7 @@ except:
 
 db_handler.open_connection()
 
-db_handler.execute_query(copy_csv)
+
 
 results = db_handler.execute_query(inner_join)
 
