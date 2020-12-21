@@ -19,7 +19,7 @@ import os
 
 db_handler = DB_handler('plixer','plixer','admin','127.0.0.1')
 
-path_to_csv = '/home/plixer/scrutinizer/files/ipsearch/iplist.csv'
+path_to_csv = '/home/plixer/scrutinizer/files/ipsearch/sunburst/ips.csv'
 
 db_handler.test_connection()
 host_search = Host_searcher()
@@ -41,8 +41,10 @@ print(copy_csv)
 print(inner_join)
 # query_test = host_search.all_hosts()
 
-db_handler.execute_query(create_table_query)
-
+try:
+    db_handler.execute_query(create_table_query)
+except:
+    pass
 db_handler.execute_query(copy_csv)
 
 results = db_handler.execute_query(inner_join)
