@@ -78,7 +78,7 @@ class Host_searcher():
 
 
 
-db_handler = DB_handler('plixer','plixer','admin','127.0.0.1')
+db_handler = DB_handler('plixer','scrutremote','admin','127.0.0.1')
 
 path_to_csv = '/home/plixer/scrutinizer/files/ipsearch/sunburst/ips.csv'
 
