@@ -41,10 +41,15 @@ print(copy_csv)
 print(inner_join)
 # query_test = host_search.all_hosts()
 
-# try:
-#     db_handler.execute_query(create_table_query)
-# except:
-#     pass
+try:
+    db_handler.execute_query(create_table_query)
+except:
+    db_handler.close_connection()
+
+    pass
+
+db_handler.open_connection()
+
 db_handler.execute_query(copy_csv)
 
 results = db_handler.execute_query(inner_join)
