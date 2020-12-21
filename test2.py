@@ -17,7 +17,7 @@ import os
 
 
 
-db_handler = DB_handler('plixer','scrutremote','admin','10.60.2.19')
+db_handler = DB_handler('plixer','plixer','admin','127.0.0.1')
 
 path_to_csv = '/home/plixer/scrutinizer/files/ipsearch/iplist.csv'
 
