@@ -111,7 +111,7 @@ class Host_searcher():
 def write_output(index_data):
 
 
-    with open('./csv_output/index_results.csv', mode='w',  newline='') as search_results, open('./csv_output/index_detailed.csv', mode='w', newline='') as detailed_results:
+    with open('./csv_output/index_results.csv', mode='w') as search_results, open('./csv_output/index_detailed.csv', mode='w') as detailed_results:
         results_columns = ["Host Searched For", "Number of Exporters Seen On",
                             "Total Number of Connections", "List of Exporters Found On"]
         detailed_columns = [
