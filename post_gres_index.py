@@ -13,6 +13,7 @@ class DB_handler:
     #method used to insert into DB
 
     def open_connection(self):
+        print('connection to DB successful')
         self.conn = psycopg2.connect("dbname={} user={} password={} host={}".format(self.db_name,self.db_user,self.db_password,self.db_host))
         self.cur = self.conn.cursor()
         return self.cur
@@ -32,13 +33,15 @@ class DB_handler:
         
         self.cur.execute(query)
         response = self.cur.fetchall()
-
+        print( 'got {} results in host index'.format(len(response)))
         data_returned = []
 
         try:
             for result in response:
                 host_found = result[0]
+
                 exporter_seen_on = result[1]
+                print('match found for {} on exporter {}'.format(host_found, exporter_seen_on))
                 connections = result[5]
                 first_seen = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(result[6]))
                 last_seen = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(result[7]))
@@ -163,19 +166,21 @@ copy_csv = host_search.copy_csv('sunburst',path_to_csv)
 inner_join = host_search.inner_joins('sunburst')
 
 
-# try:
-#     db_handler.execute_query(create_table_query)
-#     db_handler.execute_query(copy_csv)
+try:
+    print('creating DB table from CSV provided')
+    db_handler.execute_query(create_table_query)
+    print('copying CSV to postgrest')
+    db_handler.execute_query(copy_csv)
+    db_handler.close_connection()
     
-# except:
-#     db_handler.close_connection()
-
-#     pass
+except:
+    db_handler.close_connection()
+    pass
 
 db_handler.open_connection()
 
-
-
+print('comparing CSV provied to host index table')
 results = db_handler.execute_index_query(inner_join)
+db_handler.close_connection()
 
 write_output(results)
