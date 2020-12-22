@@ -18,6 +18,8 @@ class DB_handler:
 
     def execute_query(self, query):
         self.cur.execute(query)
+        response = self.cur.fetchall()
+        print(response)
         try:
             record = [r[0] for r in self.cur.fetchall()]
             
