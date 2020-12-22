@@ -40,8 +40,6 @@ class DB_handler:
                 host_found = result[0]
                 exporter_seen_on = result[1]
                 connections = result[5]
-                first_seen = result[6]
-                last_seen = result[7]
                 first_seen = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(result[6]))
                 last_seen = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(result[7]))
                 returned_object = {
@@ -107,7 +105,50 @@ class Host_searcher():
         
 
 
-db_handler = DB_handler('plixer','scrutremote','admin','10.60.2.19')
+
+
+
+def write_output(index_data):
+
+
+    with open('./csv_output/index_results.csv', mode='w',  newline='') as search_results, open('./csv_output/index_detailed.csv', mode='w', newline='') as detailed_results:
+        results_columns = ["Host Searched For", "Number of Exporters Seen On",
+                            "Total Number of Connections", "List of Exporters Found On"]
+        detailed_columns = [
+            "Host Searched For", "Unique Exporter", "Connections per Exporter", "First Seen", "Last Seen"]
+        results_writer = csv.DictWriter(
+            search_results, results_columns)
+        detailed_writer = csv.DictWriter(
+            detailed_results, detailed_columns)
+        results_writer.writeheader()
+        detailed_writer.writeheader()
+        try:
+            # for ip_hit in index_data:
+            #     dict_to_write = {
+            #         "Host Searched For": ip_hit['host_found'],
+            #         "Number of Exporters Seen On": len(ip_hit['results']['just_exporters']),
+            #         "Total Number of Connections": ip_hit['results']['aggregate_connections'],
+            #         "List of Exporters Found On":(ip_hit['results']['just_exporters']),
+                    
+
+            #     }
+            #     results_writer.writerow(dict_to_write)
+                for unique_result in index_data:
+
+                    detailed_to_write = {
+                        "Host Searched For": unique_result['host_found'],
+                        "Unique Exporter": unique_result['exporter_seen_on'],
+                        "First Seen":  unique_result['first_seen'],
+                        "Last Seen":  unique_result['last_seen'],
+                        "Connections per Exporter":  unique_result['connections']
+
+                    }
+                    detailed_writer.writerow(detailed_to_write)
+        except Exception as e:
+            print(e)
+
+
+db_handler = DB_handler('plixer','root','admin','127.0.0.1')
 path_to_csv = '/home/plixer/scrutinizer/files/ipsearch/sunburst/allips.csv'
 
 
@@ -137,4 +178,4 @@ db_handler.open_connection()
 
 results = db_handler.execute_index_query(inner_join)
 
-print(results)
+write_output(results)
